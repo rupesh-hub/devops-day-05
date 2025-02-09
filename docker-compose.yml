@@ -1,0 +1,22 @@
+services:
+
+  devops-05:
+    container_name: devops-05
+    image: rupesh1997/devops-05:1.0.0
+    ports:
+      - "8181:8181"
+    networks:
+      - devops
+    restart: always
+    depends_on:
+      - mysql
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8181/actuator/health" ]
+      interval: 10s
+      retries: 5
+      start_period: 15s
+      timeout: 5s
+
+networks:
+  devops:
+    driver: bridge
