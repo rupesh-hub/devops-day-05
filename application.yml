@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp-argo-application
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/rupesh-hub/devops-day-05.git
+    targetVersion: HEAD
+    path: deployment
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: devops
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - Prune=true
+
+    automated:
+      prune: true
+      selfHeal: true
