@@ -14,6 +14,6 @@ public class AuditingConfiguration implements AuditorAware<String> {
     @Override
     @NonNull
     public Optional<String> getCurrentAuditor() {
-        return Optional.of("BACKEND-SVC");
+        return Optional.of("SYSTEM-ADMIN");
     }
 }
