@@ -1,7 +1,7 @@
 services:
 
-  devops-05:
-    container_name: devops-05
+  backend-svc:
+    container_name: backend-svc
     image: rupesh1997/devops-day-05:1.0.0
     ports:
       - "8181:8181"
