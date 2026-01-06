@@ -1,0 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: "default"
+    import:
+      - "application-docker.yaml"
+      - "application-production.yaml"
+  profiles:
+    active: production
+server:
+  port: 8181

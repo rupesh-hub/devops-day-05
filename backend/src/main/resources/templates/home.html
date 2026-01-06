@@ -12,21 +12,18 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #05497e, #b40642);
+            background: linear-gradient(135deg, #05497e, #64041f);
             color: white;
             text-align: center;
         }
+
         .container {
             background: rgba(255, 255, 255, 0.1);
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+
         .message {
             font-size: 24px;
             font-weight: bold;
@@ -36,7 +33,6 @@
 </head>
 <body>
 <div class="container">
-    <h1>Spring Boot + Thymeleaf Demo</h1>
     <div class="message" th:text="${message}"></div>
 </div>
 </body>

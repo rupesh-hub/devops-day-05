@@ -1,0 +1,23 @@
+services:
+
+  devops-05:
+    container_name: devops-05
+    image: rupesh1997/devops-day-05:1.0.0
+    ports:
+      - "8181:8181"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8181/actuator/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+    extends:
+      file: common-config.yaml
+      service: network-configuration
+
+networks:
+  devops:
+    driver: bridge

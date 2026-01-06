@@ -1,4 +1,8 @@
 spring:
+  config:
+    activate:
+      on-profile: "production"
+
   application:
     name: devops-day-05
   thymeleaf:
@@ -6,6 +10,3 @@ spring:
 
 server:
   port: 8181
-  servlet:
-    context-path: /
-

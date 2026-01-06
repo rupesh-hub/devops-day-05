@@ -1,0 +1,10 @@
+spring:
+  config:
+    activate:
+      on-profile: "docker"
+  application:
+    name: devops-day-05
+  thymeleaf:
+    cache: false
+server:
+  port: 8181

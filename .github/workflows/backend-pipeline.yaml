@@ -1,4 +1,4 @@
-name: DEVOPS DAY 05 PIPELINE
+name: backend pipeline
 on:
   push:
     branches:
