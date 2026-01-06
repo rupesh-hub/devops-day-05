@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: rupesh1997/devops-day-05:1.0.0
+        image: rupesh1997/devops-day-05:1.0.1
         ports:
           - containerPort: 8181
         resources:
