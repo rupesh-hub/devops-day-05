@@ -1,5 +1,4 @@
 services:
-
   backend-svc:
     container_name: backend-svc
     image: rupesh1997/devops-day-05:1.0.0
@@ -7,7 +6,7 @@ services:
       - "8181:8181"
     restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "wget -qO- http://localhost:8181/actuator/health || exit 1" ]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8181/actuator/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -17,7 +16,6 @@ services:
     extends:
       file: common-config.yaml
       service: network-configuration
-
 networks:
   devops:
     driver: bridge
