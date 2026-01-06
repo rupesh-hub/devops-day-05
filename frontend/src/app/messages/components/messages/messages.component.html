@@ -1,0 +1,35 @@
+<div class="message-container">
+  <header class="table-header">
+    <h4>Messages</h4>
+  </header>
+
+  <div class="table-responsive">
+    <table class="styled-table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Content</th>
+        <th>Created By</th>
+        <th>Created On</th>
+        <th>Modified On</th>
+        <th class="text-center">Actions</th>
+      </tr>
+      </thead>
+      <tbody *ngIf="messages()">
+      <tr *ngFor="let message of messages()">
+        <td>{{ message.id }}</td>
+        <td class="content-cell">{{ message.content }}</td>
+        <td><span class="badge-user">{{ message.createdBy }}</span></td>
+        <td>{{ message.createdOn | date:'short' }}</td>
+        <td>{{ message.modifiedOn | date:'short' }}</td>
+        <td class="text-center">
+          <button class="btn-icon">Edit</button>
+        </td>
+      </tr>
+      <tr *ngIf="messages()?.length === 0">
+        <td colspan="6" class="no-data">No messages found.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

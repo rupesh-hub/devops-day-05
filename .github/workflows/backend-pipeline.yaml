@@ -8,7 +8,6 @@ on:
       - 'docker/backend/Dockerfile'
       - '.github/workflows/backend-*.yaml'
 
-# Prevents conflicts if frontend and backend pipelines update manifests simultaneously
 concurrency:
   group: gitops-updates
   cancel-in-progress: false
@@ -19,17 +18,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # Optimization: Shallow clone
 
       - uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'corretto'
-          cache: 'maven' # Speeds up build by caching dependencies
+          cache: 'maven'
 
-      - name: Build with Maven
+      - name: Build JAR
         run: |
           cd backend
           ./mvnw clean package -DskipTests
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/*.jar
+          retention-days: 1 # Optimization: Auto-cleanup artifact
+
+      - name: Cleanup Workspace
+        if: always()
+        run: rm -rf *
 
   docker:
     name: Build & Push Docker
@@ -39,23 +51,29 @@ jobs:
       VERSION: ${{ steps.extract_version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/
 
       - name: Extract version
         id: extract_version
         run: |
           cd backend
-          # Extract version from pom.xml without running full maven
           VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - uses: docker/setup-buildx-action@v3
+
       - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_SECRET_KEY }}
 
-      - name: Build and Push
-        uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v5
         with:
           context: backend
           file: docker/backend/Dockerfile
@@ -66,9 +84,10 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ steps.extract_version.outputs.VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
-          build-args: |
-            PROJECT_VERSION=${{ steps.extract_version.outputs.VERSION }}
-            ACTIVE_PROFILE=production
+
+      - name: Cleanup Workspace
+        if: always()
+        run: rm -rf *
 
   update-deployments:
     name: Update Manifests
@@ -81,10 +100,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.TOKEN }}
+          # No fetch-depth: 1 here because we need to push back to git
 
       - name: Setup Git Config
         run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "rupesh1997"
           git config user.email "dulalrupesh77@gmail.com"
 
@@ -97,14 +116,11 @@ jobs:
           K8S_PATH="kubernetes/backend.yaml"
           IMAGE_NAME="$USER/backend:$VERSION"
 
-          # 1. Update Docker Compose using yq (Targeting the backend service specifically)
+          # Update Docker Compose
           yq -i ".services.backend-svc.image = \"$IMAGE_NAME\"" "$COMPOSE_PATH"
 
-          # 2. Update Kubernetes (Targeting the backend container name)
-          sed -i "/name: backend/,/image:/ s|image:.*|image: $IMAGE_NAME|" "$K8S_PATH"
-
-          # Store variables for the next step
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          # Update Kubernetes using yq for safety
+          yq -i "select(.kind == \"Deployment\" and .metadata.name == \"backend-deployment\").spec.template.spec.containers[0].image = \"$IMAGE_NAME\"" "$K8S_PATH"
 
       - name: Commit and Push
         run: |
@@ -112,7 +128,11 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to manifests."
           else
-            git commit -m "chore(backend): update image tag to ${{ env.VERSION }} [skip ci]"
+            git commit -m "chore(backend): update image to ${{ needs.docker.outputs.VERSION }} [skip ci]"
             git pull --rebase origin main
             git push origin main
           fi
+
+      - name: Final Workspace Cleanup
+        if: always()
+        run: rm -rf *

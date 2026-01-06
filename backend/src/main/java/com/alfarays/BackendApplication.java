@@ -21,13 +21,19 @@ public class BackendApplication {
 
 
     @Bean
-    public ApplicationRunner applicationRunner() {
+    public ApplicationRunner applicationRunner(MessageRepository messageRepository) {
         return args -> {
-            messageRepository.save(
-                    Message.builder()
-                            .content("Welcome to devops practice [MySql, Thymeleaf 2-tier application]")
-                            .build()
-            );
+            // Only seed data if the database is empty to avoid duplicates on every restart
+            if (messageRepository.count() == 0) {
+                java.util.stream.IntStream.rangeClosed(1, 10).forEach(i -> {
+                    messageRepository.save(
+                            Message.builder()
+                                    .content("Message #" + i + ": Welcome to devops practice [MySql, Thymeleaf 2-tier application]")
+                                    .build()
+                    );
+                });
+                System.out.println(">> Database seeded with 10 practice messages.");
+            }
         };
     }
 }

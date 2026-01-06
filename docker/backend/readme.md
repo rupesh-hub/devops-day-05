@@ -10,7 +10,7 @@
    ```shell
     docker run -d \
     -p 8181:8181 \
-    --name backend \
+    --name backend-svc \
     -e SPRING_PROFILES_ACTIVE=docker \
     --network devops \
     rupesh1997/backend:1.0.2
@@ -19,7 +19,7 @@
    ```shell
     docker run -d \
     -p 8181:8181 \
-    --name backend \
+    --name backend-svc \
     --network devops \
     -e SPRING_PROFILES_ACTIVE=docker \
     -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/devops \
@@ -38,8 +38,8 @@
      -e MYSQL_DATABASE=devops \
      mysql:8.0
        
-    docker stop devops-day-05 && 
-    docker rm devops-day-05 && 
+    docker stop backend-svc && 
+    docker rm backend-svc && 
     docker system prune -f && 
     clear
 ``` 

@@ -1,0 +1,42 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: frontend-deployment
+  namespace: devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: rupesh1997/frontend:1.0.0
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: devops
+  name: frontend
+spec:
+  ports:
+    - port: 4200
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: frontend
+  type: LoadBalancer

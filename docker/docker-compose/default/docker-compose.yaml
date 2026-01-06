@@ -18,6 +18,19 @@ services:
       file: common-config.yaml
       service: network-configuration
 
+  frontend:
+    container_name: frontend
+    image: rupesh1997/frontend:1.0.0
+    ports:
+      - "4200:8080"
+    restart: always
+    depends_on:
+      backend-svc:
+        condition: service_started
+    extends:
+      file: common-config.yaml
+      service: network-configuration
+
 networks:
   devops:
     driver: bridge

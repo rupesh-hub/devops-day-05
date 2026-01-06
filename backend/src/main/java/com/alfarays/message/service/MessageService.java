@@ -6,6 +6,8 @@ import com.alfarays.message.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MessageService {
@@ -16,6 +18,13 @@ public class MessageService {
         return messageRepository.findById(id)
                 .map(MessageMapper::toResponse)
                 .orElseThrow(() -> new RuntimeException("No resource found !"));
+    }
+
+    public List<MessageResponse> messages() {
+        return messageRepository.findAll()
+                .stream()
+                .map(MessageMapper::toResponse)
+                .toList();
     }
 
 }
