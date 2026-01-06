@@ -12,10 +12,11 @@ ARG ACTIVE_PROFILE=default
 ARG PROJECT_VERSION=1.0.0
 
 WORKDIR /app
-COPY --from=build /build/target/devops-day-05-*.jar /app/
+COPY --from=build /build/target/backend-*.jar /app/
 
 EXPOSE 8181
 ENV PROFILE=${ACTIVE_PROFILE}
 ENV JAR_VERSION=${PROJECT_VERSION}
+ENV DATABASE_URL="jdbc:mysql://mysql:3306/devops"
 
-CMD java -jar -Dspring.profiles.active=${PROFILE} devops-day-05-${JAR_VERSION}.jar
+CMD java -jar -Dspring.profiles.active=${PROFILE} -Dspring.datasource.url=${DATABASE_URL} backend-${JAR_VERSION}.jar

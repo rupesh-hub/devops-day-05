@@ -1,11 +1,38 @@
 spring:
+
+  datasource:
+    url: jdbc:h2:mem:devops
+    driverClassName: org.h2.Driver
+    username: sh
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+
   config:
     activate:
       on-profile: "default"
     import:
-      - "application-docker.yaml"
-      - "application-production.yaml"
+      - "optional:application-docker.yaml"
+      - "optional:application-production.yaml"
+
   profiles:
-    active: production
+    active: default
+
 server:
   port: 8181

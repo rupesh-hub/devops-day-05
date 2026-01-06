@@ -1,12 +1,34 @@
 services:
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: devops
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    extends:
+      file: common-config.yaml
+      service: network-configuration
+
   backend-svc:
     container_name: backend-svc
-    image: rupesh1997/devops-day-05:1.0.1
+    image: rupesh1997/backend:1.0.2
     ports:
       - "8181:8181"
     restart: always
+    depends_on:
+      mysql:
+        condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8181/actuator/health || exit 1"]
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8181/actuator/health || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3

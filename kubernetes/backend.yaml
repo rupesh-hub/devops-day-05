@@ -14,17 +14,29 @@ spec:
         app: backend
     spec:
       containers:
-      - name: backend
-        image: rupesh1997/devops-day-05:1.0.1
-        ports:
-          - containerPort: 8181
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
+        - name: backend
+          image: rupesh1997/backend:1.0.1
+          ports:
+            - containerPort: 8181
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "production"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql:3306/devops"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MYSQL_ROOT_PASSWORD
+                  name: secrets
 
 ---
 kind: Service

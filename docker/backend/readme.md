@@ -1,41 +1,43 @@
 1. Build Image
    ```shell
-    docker build -t rupesh1997/devops-day-05:1.0.0 \
+    docker build -t rupesh1997/backend:1.0.2 \
        --build-arg ACTIVE_PROFILE=docker \
-       --build-arg PROJECT_VERSION=1.0.0 \
+       --build-arg PROJECT_VERSION=1.0.2 \
        -f ../docker/backend/Dockerfile .
     ```
 
-2. Run Product Service Container
+2. Run container
    ```shell
-    docker network create devops --driver bridge && 
     docker run -d \
     -p 8181:8181 \
-    --name devops-day-05 \
+    --name backend \
     -e SPRING_PROFILES_ACTIVE=docker \
     --network devops \
-    rupesh1997/devops-day-05:1.0.0
+    rupesh1997/backend:1.0.2
     ```
 
    ```shell
-    #With mysql database dependency
-    #network - check if it is already created
-    docker network inspect devops >/dev/null 2>&1 \
-    || docker network create devops --driver bridge
-    docker system prune -f &&
-    clear &&
     docker run -d \
     -p 8181:8181 \
-    --name devops-day-05 \
+    --name backend \
     --network devops \
     -e SPRING_PROFILES_ACTIVE=docker \
     -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/devops \
     -e SPRING_DATASOURCE_PASSWORD=root \
-    rupesh1997/devops-day-05:1.0.0
+    rupesh1997/backend:1.0.2
     ```
 
 
 ```shell
+    docker network inspect devops >/dev/null 2>&1 \
+    || docker network create devops --driver bridge
+    
+    docker run -d -p 3306:3306 \
+     --name mysql --network devops \
+     -e MYSQL_ROOT_PASSWORD=root \
+     -e MYSQL_DATABASE=devops \
+     mysql:8.0
+       
     docker stop devops-day-05 && 
     docker rm devops-day-05 && 
     docker system prune -f && 
