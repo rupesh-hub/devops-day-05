@@ -38,7 +38,7 @@ services:
       service: network-configuration
   frontend:
     container_name: frontend
-    image: rupesh1997/frontend:0.0.0
+    image: rupesh1997/frontend:1.0.0
     ports:
       - "4200:8080"
     restart: always
