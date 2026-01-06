@@ -64,8 +64,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/devops-day-05:${{ steps.extract_version.outputs.VERSION }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/devops-day-05:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ steps.extract_version.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
           build-args: |
             PROJECT_VERSION=${{ steps.extract_version.outputs.VERSION }}
             ACTIVE_PROFILE=production
@@ -95,7 +95,7 @@ jobs:
         run: |
           COMPOSE_PATH="docker/docker-compose/production/docker-compose.yaml"
           K8S_PATH="kubernetes/backend.yaml"
-          IMAGE_NAME="$USER/devops-day-05:$VERSION"
+          IMAGE_NAME="$USER/backend:$VERSION"
 
           # 1. Update Docker Compose using yq (Targeting the backend service specifically)
           yq -i ".services.backend-svc.image = \"$IMAGE_NAME\"" "$COMPOSE_PATH"
