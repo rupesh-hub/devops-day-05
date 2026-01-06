@@ -37,7 +37,6 @@ spec:
                 secretKeyRef:
                   key: MYSQL_ROOT_PASSWORD
                   name: secrets
-
 ---
 kind: Service
 apiVersion: v1
