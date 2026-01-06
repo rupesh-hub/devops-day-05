@@ -49,6 +49,7 @@ jobs:
     needs: [ compile-test-build ]
     outputs:
       VERSION: ${{ steps.extract_version.outputs.VERSION }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -84,6 +85,9 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ steps.extract_version.outputs.VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
+          build-args: |
+            PROJECT_VERSION=${{ steps.extract_version.outputs.VERSION }} 
+            ACTIVE_PROFILE=production
 
       - name: Cleanup Workspace
         if: always()

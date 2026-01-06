@@ -44,6 +44,8 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ steps.extract_version.outputs.VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
+          build-args: |
+            CONFIGURATION=production
 
   update-deployments:
     needs: [ build ]
